@@ -1,0 +1,57 @@
+@page "/Categories"
+@rendermode InteractiveServer
+@using demoWeb.Services
+@using demoWeb.Models
+@inject ICategoryService CategoryServices
+
+<h3>Categories</h3>
+@if (categories != null)
+{
+    <a href="/Categories/create" class="btn btn-primary">CREATE</a>
+    <table class="table table-striped m-4">
+        <thead>
+        <tr>
+            <td>Id</td>
+            <td>Name</td>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var category in categories)
+        {
+            <tr>
+                <td>@category.Id</td>
+                <td>@category.Name</td>
+                <td>
+                    <a href="/Categories/edit/@category.Id" class="btn btn-secondary">Edit</a>
+                </td>
+                <td>
+                    <button class="btn btn-danger"@onclick="()=>DeleteCategory(category.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    
+}
+@code {
+    private List<Category>? categories;
+
+    protected override async Task OnInitializedAsync()
+    { 
+        await LoadCategories();
+    }
+
+    private async Task LoadCategories()
+    {
+        categories = await CategoryServices.GetAllCategoryAsync();
+    }
+
+    private async Task DeleteCategory(int Id)
+    {
+        await CategoryServices.DeleteCategoryAsync(Id);
+        categories = await CategoryServices.GetAllCategoryAsync();
+    }
+};
